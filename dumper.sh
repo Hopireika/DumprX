@@ -81,7 +81,7 @@ EXTERNAL_TOOLS=(
 	bkerler/oppo_ozip_decrypt
 	bkerler/oppo_decrypt
 	marin-m/vmlinux-to-elf
-	ShivamKumarJha/android_tools
+	Hopireika/android_tools
 	HemanthJabalpuri/pacextractor
 )
 
