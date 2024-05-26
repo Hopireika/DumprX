@@ -15,7 +15,7 @@ function __bannerTop() {
 	local GREEN='\033[0;32m'
 	local NC='\033[0m'
 	echo -e \
-	${GREEN}"
+		${GREEN}"
 	██████╗░██╗░░░██╗███╗░░░███╗██████╗░██████╗░██╗░░██╗
 	██╔══██╗██║░░░██║████╗░████║██╔══██╗██╔══██╗╚██╗██╔╝
 	██║░░██║██║░░░██║██╔████╔██║██████╔╝██████╔╝░╚███╔╝░
@@ -58,21 +58,21 @@ elif [[ "${1}" = " " || -n "$2" ]]; then
 	printf "\n  \e[1;31;40m ! BRUH: Enter Only Firmware File Path.\e[0m\n\n"
 	sleep .5s && _usage && sleep 1s && exit 1
 else
-	_usage			# Output Usage By Default
+	_usage # Output Usage By Default
 fi
 
 # Set Base Project Directory
-PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 if echo "${PROJECT_DIR}" | grep " "; then
 	printf "\nProject Directory Path Contains Empty Space,\nPlace The Script In A Proper UNIX-Formatted Folder\n\n"
 	sleep 1s && exit 1
 fi
 
 # Sanitize And Generate Folders
-INPUTDIR="${PROJECT_DIR}"/input		# Firmware Download/Preload Directory
-UTILSDIR="${PROJECT_DIR}"/utils		# Contains Supportive Programs
-OUTDIR="${PROJECT_DIR}"/out			# Contains Final Extracted Files
-TMPDIR="${OUTDIR}"/tmp				# Temporary Working Directory
+INPUTDIR="${PROJECT_DIR}"/input # Firmware Download/Preload Directory
+UTILSDIR="${PROJECT_DIR}"/utils # Contains Supportive Programs
+OUTDIR="${PROJECT_DIR}"/out     # Contains Final Extracted Files
+TMPDIR="${OUTDIR}"/tmp          # Temporary Working Directory
 
 rm -rf "${TMPDIR}" 2>/dev/null
 mkdir -p "${OUTDIR}" "${TMPDIR}" 2>/dev/null
@@ -141,8 +141,8 @@ OTHERPARTITIONS="tz.mbn:tz tz.img:tz modem.img:modem NON-HLOS:modem boot-verifie
 
 # NOTE: $(pwd) is ${PROJECT_DIR}
 if echo "${1}" | grep -q "${PROJECT_DIR}/input" && [[ $(find "${INPUTDIR}" -maxdepth 1 -type f -size +10M -print | wc -l) -gt 1 ]]; then
-	FILEPATH=$(printf "%s\n" "$1")		# Relative Path To Script
-	FILEPATH=$(realpath "${FILEPATH}")	# Absolute Path
+	FILEPATH=$(printf "%s\n" "$1")     # Relative Path To Script
+	FILEPATH=$(realpath "${FILEPATH}") # Absolute Path
 	printf "Copying Everything Into %s For Further Operations." "${TMPDIR}"
 	cp -a "${FILEPATH}"/* "${TMPDIR}"/
 	unset FILEPATH
@@ -150,11 +150,11 @@ elif echo "${1}" | grep -q "${PROJECT_DIR}/input/" && [[ $(find "${INPUTDIR}" -m
 	printf "Input Directory Exists And Contains File\n"
 	cd "${INPUTDIR}"/ || exit
 	# Input File Variables
-	FILEPATH=$(find "$(pwd)" -maxdepth 1 -type f -size +300M 2>/dev/null)	# INPUTDIR's FILEPATH is Always File
+	FILEPATH=$(find "$(pwd)" -maxdepth 1 -type f -size +300M 2>/dev/null) # INPUTDIR's FILEPATH is Always File
 	FILE=${FILEPATH##*/}
 	EXTENSION=${FILEPATH##*.}
 	if echo "${EXTENSION}" | grep -q "zip\|rar\|7z\|tar$"; then
-		UNZIP_DIR=${FILE%.*}			# Strip The File Extention With %.*
+		UNZIP_DIR=${FILE%.*} # Strip The File Extention With %.*
 	fi
 else
 	# Attempt To Download File/Folder From Internet
@@ -164,11 +164,11 @@ else
 		cd "${INPUTDIR}"/ || exit
 		rm -rf "${INPUTDIR:?}"/* 2>/dev/null
 		if echo "${URL}" | grep -q "mega.nz\|mediafire.com\|drive.google.com"; then
-			( "${MEGAMEDIADRIVE_DL}" "${URL}" ) || exit 1
+			("${MEGAMEDIADRIVE_DL}" "${URL}") || exit 1
 		elif echo "${URL}" | grep -q "androidfilehost.com"; then
-			( python3 "${AFHDL}" -l "${URL}" ) || exit 1
+			(python3 "${AFHDL}" -l "${URL}") || exit 1
 		elif echo "${URL}" | grep -q "/we.tl/"; then
-			( "${TRANSFER}" "${URL}" ) || exit 1
+			("${TRANSFER}" "${URL}") || exit 1
 		else
 			if echo "${URL}" | grep -q "1drv.ms"; then URL=${URL/ms/ws}; fi
 			aria2c -x16 -s8 --console-log-level=warn --summary-interval=0 --check-certificate=false "${URL}" || {
@@ -176,15 +176,15 @@ else
 			}
 		fi
 		unset URL
-		for f in *; do detox -r "${f}" 2>/dev/null; done		# Detox Filename
+		for f in *; do detox -r "${f}" 2>/dev/null; done # Detox Filename
 		# Input File Variables
-		FILEPATH=$(find "$(pwd)" -maxdepth 1 -type f 2>/dev/null)	# Single File
+		FILEPATH=$(find "$(pwd)" -maxdepth 1 -type f 2>/dev/null) # Single File
 		printf "\nWorking with %s\n\n" "${FILEPATH##*/}"
-		[[ $(echo "${FILEPATH}" | tr ' ' '\n' | wc -l) -gt 1 ]] && FILEPATH=$(find "$(pwd)" -maxdepth 2 -type d) 	# Base Folder
+		[[ $(echo "${FILEPATH}" | tr ' ' '\n' | wc -l) -gt 1 ]] && FILEPATH=$(find "$(pwd)" -maxdepth 2 -type d) # Base Folder
 	else
 		# For Local File/Folder, Do Not Use Input Directory
-		FILEPATH=$(printf "%s\n" "$1")		# Relative Path To Script
-		FILEPATH=$(realpath "${FILEPATH}")	# Absolute Path
+		FILEPATH=$(printf "%s\n" "$1")     # Relative Path To Script
+		FILEPATH=$(realpath "${FILEPATH}") # Absolute Path
 		if echo "${1}" | grep " "; then
 			if [[ -w "${FILEPATH}" ]]; then
 				detox -r "${FILEPATH}" 2>/dev/null
@@ -197,7 +197,7 @@ else
 	FILE=${FILEPATH##*/}
 	EXTENSION=${FILEPATH##*.}
 	if echo "${EXTENSION}" | grep -q "zip\|rar\|7z\|tar$"; then
-		UNZIP_DIR=${FILE%.*}			# Strip The File Extention With %.*
+		UNZIP_DIR=${FILE%.*} # Strip The File Extention With %.*
 	fi
 	if [[ -d "${FILEPATH}" || "${EXTENSION}" == "" ]]; then
 		printf "Directory Detected.\n"
@@ -210,7 +210,7 @@ else
 			if ! echo "${ArcPath}" | grep -q " "; then
 				# Assuming There're Only One Archive To Re-Load And Process
 				cd "${PROJECT_DIR}"/ || exit
-				( bash "${0}" "${ArcPath}" ) || exit 1
+				(bash "${0}" "${ArcPath}") || exit 1
 				exit
 			elif echo "${ArcPath}" | grep -q " "; then
 				printf "More Than One Archive File Is Available In %s Folder.\nPlease Use Direct Archive Path Along With This Toolkit\n" "${FILEPATH}" && exit 1
@@ -232,23 +232,23 @@ cd "${PROJECT_DIR}"/ || exit
 
 # Function for Extracting Super Images
 function superimage_extract() {
-    if [ -f super.img ]; then
-        echo "Extracting Partitions from the Super Image..."
-        ${SIMG2IMG} super.img super.img.raw 2>/dev/null
-    fi
-    if [[ ! -s super.img.raw ]] && [ -f super.img ]; then
-        mv super.img super.img.raw
-    fi
-    for partition in $PARTITIONS; do
-        ($LPUNPACK --partition="$partition"_a super.img.raw || $LPUNPACK --partition="$partition" super.img.raw) 2>/dev/null
-        if [ -f "$partition"_a.img ]; then
-            mv "$partition"_a.img "$partition".img
-        else
-            foundpartitions=$(7z l -ba "${FILEPATH}" | rev | gawk '{ print $1 }' | rev | grep $partition.img)
-            7z e -y "${FILEPATH}" $foundpartitions dummypartition 2>/dev/null >> $TMPDIR/zip.log
-        fi
-    done
-    rm -rf super.img.raw
+	if [ -f super.img ]; then
+		echo "Extracting Partitions from the Super Image..."
+		${SIMG2IMG} super.img super.img.raw 2>/dev/null
+	fi
+	if [[ ! -s super.img.raw ]] && [ -f super.img ]; then
+		mv super.img super.img.raw
+	fi
+	for partition in $PARTITIONS; do
+		($LPUNPACK --partition="$partition"_a super.img.raw || $LPUNPACK --partition="$partition" super.img.raw) 2>/dev/null
+		if [ -f "$partition"_a.img ]; then
+			mv "$partition"_a.img "$partition".img
+		else
+			foundpartitions=$(7z l -ba "${FILEPATH}" | rev | gawk '{ print $1 }' | rev | grep $partition.img)
+			7z e -y "${FILEPATH}" $foundpartitions dummypartition 2>/dev/null >>$TMPDIR/zip.log
+		fi
+	done
+	rm -rf super.img.raw
 }
 
 printf "Extracting firmware on: %s\n" "${OUTDIR}"
@@ -270,20 +270,20 @@ if [[ $(head -c12 "${FILEPATH}" 2>/dev/null | tr -d '\0') == "OPPOENCRYPT!" ]] |
 	rm -rf "${TMPDIR:?}"/*
 	printf "Re-Loading The Decrypted Content.\n"
 	cd "${PROJECT_DIR}"/ || exit
-	( bash "${0}" "${PROJECT_DIR}/input/" 2>/dev/null || bash "${0}" "${INPUTDIR}"/"${FILE%.*}".zip ) || exit 1
+	(bash "${0}" "${PROJECT_DIR}/input/" 2>/dev/null || bash "${0}" "${INPUTDIR}"/"${FILE%.*}".zip) || exit 1
 	exit
 fi
 # Oneplus .ops Check
 if 7z l -ba "${FILEPATH}" | grep -q ".*.ops" 2>/dev/null; then
 	printf "Oppo/Oneplus ops Firmware Detected Extracting...\n"
 	foundops=$(7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep ".*.ops")
-	7z e -y -- "${FILEPATH}" "${foundops}" */"${foundops}" 2>/dev/null >> "${TMPDIR}"/zip.log
+	7z e -y -- "${FILEPATH}" "${foundops}" */"${foundops}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	mkdir -p "${INPUTDIR}" 2>/dev/null && rm -rf -- "${INPUTDIR:?}"/* 2>/dev/null
 	mv "$(echo "${foundops}" | gawk -F['/'] '{print $NF}')" "${INPUTDIR}"/
 	sleep 1s
 	printf "Reloading the extracted OPS\n"
 	cd "${PROJECT_DIR}"/ || exit
-	( bash "${0}" "${PROJECT_DIR}/input/${foundops}" 2>/dev/null) || exit 1
+	(bash "${0}" "${PROJECT_DIR}/input/${foundops}" 2>/dev/null) || exit 1
 	exit
 fi
 if [[ "${EXTENSION}" == "ops" ]]; then
@@ -297,20 +297,20 @@ if [[ "${EXTENSION}" == "ops" ]]; then
 	rm -rf "${TMPDIR:?}"/*
 	printf "Re-Loading The Decrypted Content.\n"
 	cd "${PROJECT_DIR}"/ || exit
-	( bash "${0}" "${PROJECT_DIR}/input/" 2>/dev/null || bash "${0}" "${INPUTDIR}"/"${FILE%.*}".zip ) || exit 1
+	(bash "${0}" "${PROJECT_DIR}/input/" 2>/dev/null || bash "${0}" "${INPUTDIR}"/"${FILE%.*}".zip) || exit 1
 	exit
 fi
 # Oppo .ofp Check
 if 7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep -q ".*.ofp" 2>/dev/null; then
 	printf "Oppo ofp Detected.\n"
 	foundofp=$(7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep ".*.ofp")
-	7z e -y -- "${FILEPATH}" "${foundofp}" */"${foundofp}" 2>/dev/null >> "${TMPDIR}"/zip.log
+	7z e -y -- "${FILEPATH}" "${foundofp}" */"${foundofp}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	mkdir -p "${INPUTDIR}" 2>/dev/null && rm -rf -- "${INPUTDIR:?}"/* 2>/dev/null
 	mv "$(echo "${foundofp}" | gawk -F['/'] '{print $NF}')" "${INPUTDIR}"/
 	sleep 1s
 	printf "Reloading the extracted OFP\n"
 	cd "${PROJECT_DIR}"/ || exit
-	( bash "${0}" "${PROJECT_DIR}/input/${foundofp}" 2>/dev/null) || exit 1
+	(bash "${0}" "${PROJECT_DIR}/input/${foundofp}" 2>/dev/null) || exit 1
 	exit
 fi
 if [[ "${EXTENSION}" == "ofp" ]]; then
@@ -332,7 +332,7 @@ if [[ "${EXTENSION}" == "ofp" ]]; then
 	rm -rf "${TMPDIR:?}"/*
 	printf "Re-Loading The Decrypted Contents.\n"
 	cd "${PROJECT_DIR}"/ || exit
-	( bash "${0}" "${PROJECT_DIR}/input/" ) || exit 1
+	(bash "${0}" "${PROJECT_DIR}/input/") || exit 1
 	exit
 fi
 # Xiaomi .tgz Check
@@ -345,11 +345,11 @@ if [[ "${FILE##*.}" == "tgz" || "${FILE#*.}" == "tar.gz" ]]; then
 	elif [[ -f "${FILEPATH}" ]]; then
 		tar xzvf "${FILEPATH}" -C "${INPUTDIR}"/ --transform='s/.*\///'
 	fi
-	find "${INPUTDIR}"/ -type d -empty -delete     # Delete Empth Folder Leftover
+	find "${INPUTDIR}"/ -type d -empty -delete # Delete Empth Folder Leftover
 	rm -rf "${TMPDIR:?}"/*
 	printf "Re-Loading The Extracted Contents.\n"
 	cd "${PROJECT_DIR}"/ || exit
-	( bash "${0}" "${PROJECT_DIR}/input/" ) || exit 1
+	(bash "${0}" "${PROJECT_DIR}/input/") || exit 1
 	exit
 fi
 # LG KDZ Check
@@ -383,7 +383,7 @@ if [[ $(7z l -ba "${FILEPATH}" | grep -i aml) ]]; then
 	echo "AML Detected"
 	cp "${FILEPATH}" ${TMPDIR}
 	FILE="${TMPDIR}/$(basename ${FILEPATH})"
-	7z e -y "${FILEPATH}" >> ${TMPDIR}/zip.log
+	7z e -y "${FILEPATH}" >>${TMPDIR}/zip.log
 	"${AML_EXTRACT}" $(find . -type f -name "*aml*.img")
 	rename 's/.PARTITION$/.img/' *.PARTITION
 	rename 's/_aml_dtb.img$/dtb.img/' *.img
@@ -404,7 +404,7 @@ if [[ -f "${FILEPATH}" ]]; then
 		if 7z l -ba "${FILEPATH}" | grep -q "${filename}"; then
 			printf "%s Detected For %s\n" "${filename}" "${outname}"
 			foundfile=$(7z l -ba "${FILEPATH}" | grep "${filename}" | awk '{print $NF}')
-			7z e -y -- "${FILEPATH}" "${foundfile}" */"${foundfile}" 2>/dev/null >> "${TMPDIR}"/zip.log
+			7z e -y -- "${FILEPATH}" "${foundfile}" */"${foundfile}" 2>/dev/null >>"${TMPDIR}"/zip.log
 			output=$(ls -- "${filename}"* 2>/dev/null)
 			[[ ! -e "${TMPDIR}"/"${outname}".img ]] && mv "${output}" "${TMPDIR}"/"${outname}".img
 			"${SIMG2IMG}" "${TMPDIR}"/"${outname}".img "${OUTDIR}"/"${outname}".img 2>/dev/null
@@ -417,8 +417,8 @@ fi
 if 7z l -ba "${FILEPATH}" | grep -q "system.new.dat" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "system.new.dat*" -print | wc -l) -ge 1 ]]; then
 	printf "A-only DAT-Formatted OTA detected.\n"
 	for partition in $PARTITIONS; do
-		7z e -y "${FILEPATH}" ${partition}.new.dat* ${partition}.transfer.list ${partition}.img 2>/dev/null >> ${TMPDIR}/zip.log
-		7z e -y "${FILEPATH}" ${partition}.*.new.dat* ${partition}.*.transfer.list ${partition}.*.img 2>/dev/null >> ${TMPDIR}/zip.log
+		7z e -y "${FILEPATH}" ${partition}.new.dat* ${partition}.transfer.list ${partition}.img 2>/dev/null >>${TMPDIR}/zip.log
+		7z e -y "${FILEPATH}" ${partition}.*.new.dat* ${partition}.*.transfer.list ${partition}.*.img 2>/dev/null >>${TMPDIR}/zip.log
 		rename 's/(\w+)\.(\d+)\.(\w+)/$1.$3/' *
 		# For Oplus A-only OTAs, eg OnePlus Nord 2. Regex matches the 8 digits of Oplus NV ID (prop ro.build.oplus_nv_id) to remove them.
 		# hello@world:~/test_regex# rename -n 's/(\w+)\.(\d+)\.(\w+)/$1.$3/' *
@@ -426,13 +426,13 @@ if 7z l -ba "${FILEPATH}" | grep -q "system.new.dat" 2>/dev/null || [[ $(find "$
 		# rename(my_bigball.00011011.patch.dat, my_bigball.patch.dat)
 		# rename(my_bigball.00011011.transfer.list, my_bigball.transfer.list)
 		if [[ -f ${partition}.new.dat.1 ]]; then
-			cat ${partition}.new.dat.{0..999} 2>/dev/null >> ${partition}.new.dat
+			cat ${partition}.new.dat.{0..999} 2>/dev/null >>${partition}.new.dat
 			rm -rf ${partition}.new.dat.{0..999}
 		fi
 		ls | grep "\.new\.dat" | while read i; do
 			line=$(echo "$i" | cut -d"." -f1)
 			if [[ $(echo "$i" | grep "\.dat\.xz") ]]; then
-				7z e -y "$i" 2>/dev/null >> ${TMPDIR}/zip.log
+				7z e -y "$i" 2>/dev/null >>${TMPDIR}/zip.log
 				rm -rf "$i"
 			fi
 			if [[ $(echo "$i" | grep "\.dat\.br") ]]; then
@@ -441,24 +441,24 @@ if 7z l -ba "${FILEPATH}" | grep -q "system.new.dat" 2>/dev/null || [[ $(find "$
 				rm -f "$i"
 			fi
 			echo "Extracting ${partition}"
-			python3 ${SDAT2IMG} ${line}.transfer.list ${line}.new.dat "${OUTDIR}"/${line}.img > ${TMPDIR}/extract.log
+			python3 ${SDAT2IMG} ${line}.transfer.list ${line}.new.dat "${OUTDIR}"/${line}.img >${TMPDIR}/extract.log
 			rm -rf ${line}.transfer.list ${line}.new.dat
 		done
 	done
 elif 7z l -ba "${FILEPATH}" | grep rawprogram || [[ $(find "${TMPDIR}" -type f -name "*rawprogram*" | wc -l) -ge 1 ]]; then
 	echo "QFIL Detected"
 	rawprograms=$(7z l -ba ${FILEPATH} | gawk '{ print $NF }' | grep rawprogram)
-	7z e -y ${FILEPATH} $rawprograms 2>/dev/null >> ${TMPDIR}/zip.log
+	7z e -y ${FILEPATH} $rawprograms 2>/dev/null >>${TMPDIR}/zip.log
 	for partition in $PARTITIONS; do
 		partitionsonzip=$(7z l -ba ${FILEPATH} | gawk '{ print $NF }' | grep $partition)
 		if [[ ! $partitionsonzip == "" ]]; then
-			7z e -y ${FILEPATH} $partitionsonzip 2>/dev/null >> ${TMPDIR}/zip.log
+			7z e -y ${FILEPATH} $partitionsonzip 2>/dev/null >>${TMPDIR}/zip.log
 			if [[ ! -f "$partition.img" ]]; then
 				if [[ -f "$partition.raw.img" ]]; then
 					mv "$partition.raw.img" "$partition.img"
 				else
 					rawprogramsfile=$(grep -rlw $partition rawprogram*.xml)
-					"${PACKSPARSEIMG}" -t $partition -x $rawprogramsfile > ${TMPDIR}/extract.log
+					"${PACKSPARSEIMG}" -t $partition -x $rawprogramsfile >${TMPDIR}/extract.log
 					mv "$partition.raw" "$partition.img"
 				fi
 			fi
@@ -471,7 +471,7 @@ elif 7z l -ba "${FILEPATH}" | grep -q ".*.nb0" 2>/dev/null || [[ $(find "${TMPDI
 	printf "nb0-Formatted Firmware Detected.\n"
 	if [[ -f "${FILEPATH}" ]]; then
 		to_extract=$(7z l -ba "${FILEPATH}" | grep ".*.nb0" | gawk '{print $NF}')
-		7z e -y -- "${FILEPATH}" "${to_extract}" 2>/dev/null >> "${TMPDIR}"/zip.log
+		7z e -y -- "${FILEPATH}" "${to_extract}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	else
 		find "${TMPDIR}" -type f -name "*.nb0*" -exec mv {} . \; 2>/dev/null
 	fi
@@ -481,7 +481,7 @@ elif 7z l -ba "${FILEPATH}" | grep system | grep chunk | grep -q -v ".*\.so$" 2>
 	for partition in ${PARTITIONS}; do
 		if [[ -f "${FILEPATH}" ]]; then
 			foundpartitions=$(7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep "${partition}".img)
-			7z e -y -- "${FILEPATH}" *"${partition}"*chunk* */*"${partition}"*chunk* "${foundpartitions}" dummypartition 2>/dev/null >> "${TMPDIR}"/zip.log
+			7z e -y -- "${FILEPATH}" *"${partition}"*chunk* */*"${partition}"*chunk* "${foundpartitions}" dummypartition 2>/dev/null >>"${TMPDIR}"/zip.log
 		else
 			find "${TMPDIR}" -type f -name "*${partition}*chunk*" -exec mv {} . \; 2>/dev/null
 			find "${TMPDIR}" -type f -name "*${partition}*.img" -exec mv {} . \; 2>/dev/null
@@ -500,29 +500,29 @@ elif 7z l -ba "${FILEPATH}" | grep system | grep chunk | grep -q -v ".*\.so$" 2>
 elif 7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep -q "system_new.img\|^system.img\|\/system.img\|\/system_image.emmc.img\|^system_image.emmc.img" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "system*.img" | wc -l) -ge 1 ]]; then
 	printf "Image File detected.\n"
 	if [[ -f "${FILEPATH}" ]]; then
-		7z x -y "${FILEPATH}" 2>/dev/null >> "${TMPDIR}"/zip.log
+		7z x -y "${FILEPATH}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	fi
 	for f in "${TMPDIR}"/*; do detox -r "${f}" 2>/dev/null; done
 	find "${TMPDIR}" -mindepth 2 -type f -name "*_image.emmc.img" | while read -r i; do mv "${i}" "${i/_image.emmc.img/.img}" 2>/dev/null; done
 	find "${TMPDIR}" -mindepth 2 -type f -name "*_new.img" | while read -r i; do mv "${i}" "${i/_new.img/.img}" 2>/dev/null; done
 	find "${TMPDIR}" -mindepth 2 -type f -name "*.img.ext4" | while read -r i; do mv "${i}" "${i/.img.ext4/.img}" 2>/dev/null; done
-	find "${TMPDIR}" -mindepth 2 -type f -name "*.img" -exec mv {} . \;	# move .img in sub-dir to ${TMPDIR}
+	find "${TMPDIR}" -mindepth 2 -type f -name "*.img" -exec mv {} . \; # move .img in sub-dir to ${TMPDIR}
 	### Keep some files, add script here to retain them
 	find "${TMPDIR}" -type f -iname "*Android_scatter.txt" -exec mv {} "${OUTDIR}"/ \;
 	find "${TMPDIR}" -type f -iname "*Release_Note.txt" -exec mv {} "${OUTDIR}"/ \;
-	find "${TMPDIR}" -type f ! -name "*img*" -exec rm -rf {} \;	# delete other files
+	find "${TMPDIR}" -type f ! -name "*img*" -exec rm -rf {} \; # delete other files
 	find "${TMPDIR}" -maxdepth 3 -type f -name "*.img" -exec mv {} . \; 2>/dev/null
 elif 7z l -ba "${FILEPATH}" | grep -q "system.sin\|.*system_.*\.sin" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "system*.sin" | wc -l) -ge 1 ]]; then
 	printf "sin Image Detected.\n"
-	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >> "${TMPDIR}"/zip.log
+	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	# Remove Unnecessary Filename Part
 	to_remove=$(find . -type f | grep ".*boot_.*\.sin" | gawk '{print $NF}' | sed -e 's/boot_\(.*\).sin/\1/')
 	[[ -z "$to_remove" ]] && to_remove=$(find . -type f | grep ".*cache_.*\.sin" | gawk '{print $NF}' | sed -e 's/cache_\(.*\).sin/\1/')
 	[[ -z "$to_remove" ]] && to_remove=$(find . -type f | grep ".*vendor_.*\.sin" | gawk '{print $NF}' | sed -e 's/vendor_\(.*\).sin/\1/')
-	find "${TMPDIR}" -mindepth 2 -type f -name "*.sin" -exec mv {} . \;	# move .img in sub-dir to ${TMPDIR}
-	find "${TMPDIR}" -maxdepth 1 -type f -name "*_${to_remove}.sin" | while read -r i; do mv "${i}" "${i/_${to_remove}.sin/.sin}" 2>/dev/null; done	# proper names
+	find "${TMPDIR}" -mindepth 2 -type f -name "*.sin" -exec mv {} . \;                                                                             # move .img in sub-dir to ${TMPDIR}
+	find "${TMPDIR}" -maxdepth 1 -type f -name "*_${to_remove}.sin" | while read -r i; do mv "${i}" "${i/_${to_remove}.sin/.sin}" 2>/dev/null; done # proper names
 	"${UNSIN}" -d "${TMPDIR}"
-	find "${TMPDIR}" -maxdepth 1 -type f -name "*.ext4" | while read -r i; do mv "${i}" "${i/.ext4/.img}" 2>/dev/null; done	# proper names
+	find "${TMPDIR}" -maxdepth 1 -type f -name "*.ext4" | while read -r i; do mv "${i}" "${i/.ext4/.img}" 2>/dev/null; done # proper names
 	foundsuperinsin=$(find "${TMPDIR}" -maxdepth 1 -type f -name "super_*.img")
 	if [ ! -z $foundsuperinsin ]; then
 		mv $(ls ${TMPDIR}/super_*.img) "${TMPDIR}/super.img"
@@ -531,7 +531,7 @@ elif 7z l -ba "${FILEPATH}" | grep -q "system.sin\|.*system_.*\.sin" 2>/dev/null
 	fi
 elif 7z l -ba "${FILEPATH}" | grep ".pac$" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "*.pac" | wc -l) -ge 1 ]]; then
 	printf "pac Detected.\n"
-	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >> "${TMPDIR}"/zip.log
+	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	for f in "${TMPDIR}"/*; do detox -r "${f}"; done
 	pac_list=$(find . -type f -name "*.pac" | cut -d'/' -f'2-' | sort)
 	for file in ${pac_list}; do
@@ -542,30 +542,30 @@ elif 7z l -ba "${FILEPATH}" | grep ".pac$" 2>/dev/null || [[ $(find "${TMPDIR}" 
 	fi
 elif 7z l -ba "${FILEPATH}" | grep -q "system.bin" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "system.bin" | wc -l) -ge 1 ]]; then
 	printf "bin Images Detected\n"
-	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >> "${TMPDIR}"/zip.log
-	find "${TMPDIR}" -mindepth 2 -type f -name "*.bin" -exec mv {} . \;	# move .img in sub-dir to ${TMPDIR}
-	find "${TMPDIR}" -maxdepth 1 -type f -name "*.bin" | while read -r i; do mv "${i}" "${i/\.bin/.img}" 2>/dev/null; done	# proper names
+	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >>"${TMPDIR}"/zip.log
+	find "${TMPDIR}" -mindepth 2 -type f -name "*.bin" -exec mv {} . \;                                                    # move .img in sub-dir to ${TMPDIR}
+	find "${TMPDIR}" -maxdepth 1 -type f -name "*.bin" | while read -r i; do mv "${i}" "${i/\.bin/.img}" 2>/dev/null; done # proper names
 elif 7z l -ba "${FILEPATH}" | grep -q "system-p" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "system-p*" | wc -l) -ge 1 ]]; then
 	printf "P-Suffix Images Detected\n"
 	for partition in ${PARTITIONS}; do
 		if [[ -f "${FILEPATH}" ]]; then
 			foundpartitions=$(7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep "${partition}-p")
-			7z e -y -- "${FILEPATH}" "${foundpartitions}" dummypartition 2>/dev/null >> "${TMPDIR}"/zip.log
+			7z e -y -- "${FILEPATH}" "${foundpartitions}" dummypartition 2>/dev/null >>"${TMPDIR}"/zip.log
 		else
 			foundpartitions=$(find . -type f -name "*${partition}-p*" | cut -d'/' -f'2-')
 		fi
-	[[ -n "${foundpartitions}" ]] && mv "$(ls "${partition}"-p*)" "${partition}".img
+		[[ -n "${foundpartitions}" ]] && mv "$(ls "${partition}"-p*)" "${partition}".img
 	done
 elif 7z l -ba "${FILEPATH}" | grep -q "system-sign.img" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "system-sign.img" | wc -l) -ge 1 ]]; then
 	printf "Signed Images Detected\n"
-	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >> "${TMPDIR}"/zip.log
+	[[ -f "${FILEPATH}" ]] && 7z x -y "${FILEPATH}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	for f in "${TMPDIR}"/*; do detox -r "${f}"; done
 	for partition in ${PARTITIONS}; do
 		[[ -e "${TMPDIR}"/"${partition}".img ]] && mv "${TMPDIR}"/"${partition}".img "${OUTDIR}"/"${partition}".img
 	done
-	find "${TMPDIR}" -mindepth 2 -type f -name "*-sign.img" -exec mv {} . \;	# move .img in sub-dir to ${TMPDIR}
-	find "${TMPDIR}" -type f ! -name "*-sign.img" -exec rm -rf {} \;	# delete other files
-	find "${TMPDIR}" -maxdepth 1 -type f -name "*-sign.img" | while read -r i; do mv "${i}" "${i/-sign.img/.img}" 2>/dev/null; done	# proper .img names
+	find "${TMPDIR}" -mindepth 2 -type f -name "*-sign.img" -exec mv {} . \;                                                        # move .img in sub-dir to ${TMPDIR}
+	find "${TMPDIR}" -type f ! -name "*-sign.img" -exec rm -rf {} \;                                                                # delete other files
+	find "${TMPDIR}" -maxdepth 1 -type f -name "*-sign.img" | while read -r i; do mv "${i}" "${i/-sign.img/.img}" 2>/dev/null; done # proper .img names
 	sign_list=$(find . -maxdepth 1 -type f -name "*.img" | cut -d'/' -f'2-' | sort)
 	for file in ${sign_list}; do
 		rm -rf "${TMPDIR}"/x.img >/dev/null 2>&1
@@ -579,16 +579,16 @@ elif 7z l -ba "${FILEPATH}" | grep -q "system-sign.img" 2>/dev/null || [[ $(find
 			offset_high=0x${offset_high:0-4}
 			offset_low=$(printf "%d" "${offset_low}")
 			offset_high=$(printf "%d" "${offset_high}")
-			offset=$((65536*offset_high+offset_low))
+			offset=$((65536 * offset_high + offset_low))
 			dd if="${TMPDIR}"/"${file}" of="${TMPDIR}"/x.img iflag=count_bytes,skip_bytes bs=8192 skip=64 count=${offset} >/dev/null 2>&1
-		else	# Header With BFBF Magic Or Another Unknowed Header
+		else # Header With BFBF Magic Or Another Unknowed Header
 			dd if="${TMPDIR}"/"${file}" of="${TMPDIR}"/x.img bs=$((0x4040)) skip=1 >/dev/null 2>&1
 		fi
 	done
 elif [[ $(7z l -ba "$FILEPATH" | grep "super.img") ]]; then
 	echo "Super Image detected"
 	foundsupers=$(7z l -ba "${FILEPATH}" | gawk '{ print $NF }' | grep "super.img")
-	7z e -y "${FILEPATH}" $foundsupers dummypartition 2>/dev/null >> ${TMPDIR}/zip.log
+	7z e -y "${FILEPATH}" $foundsupers dummypartition 2>/dev/null >>${TMPDIR}/zip.log
 	superchunk=$(ls | grep chunk | grep super | sort)
 	if [[ $(echo "$superchunk" | grep "sparsechunk") ]]; then
 		"${SIMG2IMG}" $(echo "$superchunk" | tr '\n' ' ') super.img.raw 2>/dev/null
@@ -599,7 +599,7 @@ elif [[ $(find "${TMPDIR}" -type f -name "super*.*img" | wc -l) -ge 1 ]]; then
 	echo "Super Image Detected"
 	if [[ -f "${FILEPATH}" ]]; then
 		foundsupers=$(7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep "super.*img")
-		7z e -y -- "${FILEPATH}" "${foundsupers}" dummypartition 2>/dev/null >> "${TMPDIR}"/zip.log
+		7z e -y -- "${FILEPATH}" "${foundsupers}" dummypartition 2>/dev/null >>"${TMPDIR}"/zip.log
 	fi
 	splitsupers=$(ls | grep -oP "super.[0-9].+.img")
 	if [[ ! -z "${splitsupers}" ]]; then
@@ -617,7 +617,7 @@ elif [[ $(find "${TMPDIR}" -type f -name "super*.*img" | wc -l) -ge 1 ]]; then
 elif 7z l -ba "${FILEPATH}" | grep tar.md5 | gawk '{print $NF}' | grep -q AP_ 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "*AP_*tar.md5" | wc -l) -ge 1 ]]; then
 	printf "AP tarmd5 Detected\n"
 	#mv -f "${FILEPATH}" "${TMPDIR}"/
-	[[ -f "${FILEPATH}" ]] && 7z e -y "${FILEPATH}" 2>/dev/null >> "${TMPDIR}"/zip.log
+	[[ -f "${FILEPATH}" ]] && 7z e -y "${FILEPATH}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	printf "Extracting Images...\n"
 	for i in $(ls *.tar.md5); do
 		tar -xf "${i}" || exit 1
@@ -627,7 +627,7 @@ elif 7z l -ba "${FILEPATH}" | grep tar.md5 | gawk '{print $NF}' | grep -q AP_ 2>
 	[[ $(ls *.lz4 2>/dev/null) ]] && {
 		printf "Extracting lz4 Archives...\n"
 		for f in $(ls *.lz4); do
-			lz4 -dc ${f} > "${f/.lz4/}" || exit 1
+			lz4 -dc ${f} >"${f/.lz4/}" || exit 1
 			rm -fv ${f} || exit 1
 			printf "Extracted %s\n" "${f}"
 		done
@@ -636,7 +636,7 @@ elif 7z l -ba "${FILEPATH}" | grep tar.md5 | gawk '{print $NF}' | grep -q AP_ 2>
 		mv -v $samsung_ext4_img_files "${samsung_ext4_img_files%%.ext4}"
 	done
 	if [[ -f super.img ]]; then
-		superimage_extract || exit 1	
+		superimage_extract || exit 1
 	fi
 	if [[ ! -f system.img ]]; then
 		printf "Extract failed\n"
@@ -649,7 +649,7 @@ elif 7z l -ba "${FILEPATH}" | grep ".*.rar\|.*.zip\|.*.7z\|.*.tar$" 2>/dev/null 
 	printf "Rar/Zip/7Zip/Tar Archived Firmware Detected\n"
 	if [[ -f "${FILEPATH}" ]]; then
 		mkdir -p "${TMPDIR}"/"${UNZIP_DIR}" 2>/dev/null
-		7z e -y "${FILEPATH}" -o"${TMPDIR}"/"${UNZIP_DIR}"  >> "${TMPDIR}"/zip.log
+		7z e -y "${FILEPATH}" -o"${TMPDIR}"/"${UNZIP_DIR}" >>"${TMPDIR}"/zip.log
 		for f in "${TMPDIR}"/"${UNZIP_DIR}"/*; do detox -r "${f}" 2>/dev/null; done
 	fi
 	zip_list=$(find ./"${UNZIP_DIR}" -type f -size +300M \( -name "*.rar" -o -name "*.zip" -o -name "*.7z" -o -name "*.tar" \) | cut -d'/' -f'2-' | sort)
@@ -659,19 +659,20 @@ elif 7z l -ba "${FILEPATH}" | grep ".*.rar\|.*.zip\|.*.7z\|.*.tar$" 2>/dev/null 
 		mv "${TMPDIR}"/"${file}" "${INPUTDIR}"/
 		rm -rf "${TMPDIR:?}"/*
 		cd "${PROJECT_DIR}"/ || exit
-		( bash "${0}" "${INPUTDIR}"/"${file}" ) || exit 1
+		(bash "${0}" "${INPUTDIR}"/"${file}") || exit 1
 		exit
 	done
 	rm -rf "${TMPDIR:?}"/"${UNZIP_DIR}"
 elif 7z l -ba "${FILEPATH}" | grep -q "UPDATE.APP" 2>/dev/null || [[ $(find "${TMPDIR}" -type f -name "UPDATE.APP") ]]; then
 	printf "Huawei UPDATE.APP Detected\n"
-	[[ -f "${FILEPATH}" ]] && 7z x "${FILEPATH}" UPDATE.APP 2>/dev/null >> "${TMPDIR}"/zip.log
+	[[ -f "${FILEPATH}" ]] && 7z x "${FILEPATH}" UPDATE.APP 2>/dev/null >>"${TMPDIR}"/zip.log
 	find "${TMPDIR}" -type f -name "UPDATE.APP" -exec mv {} . \;
 	python3 "${SPLITUAPP}" -f "UPDATE.APP" -l super || (
-	for partition in ${PARTITIONS}; do
-		python3 "${SPLITUAPP}" -f "UPDATE.APP" -l "${partition/.img/}" || printf "%s not found in UPDATE.APP\n" "${partition}"
-	done )
-	find output/ -type f -name "*.img" -exec mv {} . \;	# Partitions Are Extracted In "output" Folder
+		for partition in ${PARTITIONS}; do
+			python3 "${SPLITUAPP}" -f "UPDATE.APP" -l "${partition/.img/}" || printf "%s not found in UPDATE.APP\n" "${partition}"
+		done
+	)
+	find output/ -type f -name "*.img" -exec mv {} . \; # Partitions Are Extracted In "output" Folder
 	if [[ -f super.img ]]; then
 		printf "Creating super.img.raw ...\n"
 		"${SIMG2IMG}" super.img super.img.raw 2>/dev/null
@@ -720,7 +721,7 @@ done
 for partition in ${PARTITIONS}; do
 	if [[ ! -f "${partition}".img ]]; then
 		foundpart=$(7z l -ba "${FILEPATH}" | gawk '{print $NF}' | grep "${partition}.img" 2>/dev/null)
-		7z e -y -- "${FILEPATH}" "${foundpart}" */"${foundpart}" 2>/dev/null >> "${TMPDIR}"/zip.log
+		7z e -y -- "${FILEPATH}" "${foundpart}" */"${foundpart}" 2>/dev/null >>"${TMPDIR}"/zip.log
 	fi
 	[[ -f "${partition}".img ]] && "${SIMG2IMG}" "${partition}".img "${OUTDIR}"/"${partition}".img 2>/dev/null
 	[[ ! -s "${OUTDIR}"/"${partition}".img && -f "${TMPDIR}"/"${partition}".img ]] && mv "${TMPDIR}"/"${partition}".img "${OUTDIR}"/"${partition}".img
@@ -756,14 +757,14 @@ if [[ -f "${OUTDIR}"/boot.img ]]; then
 	printf "Boot extracted\n"
 	# extract-ikconfig
 	mkdir -p "${OUTDIR}"/bootRE
-	bash "${EXTRACT_IKCONFIG}" "${OUTDIR}"/boot.img > "${OUTDIR}"/bootRE/ikconfig 2> /dev/null
+	bash "${EXTRACT_IKCONFIG}" "${OUTDIR}"/boot.img >"${OUTDIR}"/bootRE/ikconfig 2>/dev/null
 	[[ ! -s "${OUTDIR}"/bootRE/ikconfig ]] && rm -f "${OUTDIR}"/bootRE/ikconfig 2>/dev/null
 	# vmlinux-to-elf
 	if [[ ! -f "${OUTDIR}"/vendor_boot.img ]]; then
-		python3 "${KALLSYMS_FINDER}" "${OUTDIR}"/boot.img > "${OUTDIR}"/bootRE/boot_kallsyms.txt >/dev/null 2>&1
+		python3 "${KALLSYMS_FINDER}" "${OUTDIR}"/boot.img >"${OUTDIR}"/bootRE/boot_kallsyms.txt >/dev/null 2>&1
 		printf "boot_kallsyms.txt generated\n"
 	else
-		python3 "${KALLSYMS_FINDER}" "${OUTDIR}"/boot/kernel > "${OUTDIR}"/bootRE/kernel_kallsyms.txt >/dev/null 2>&1
+		python3 "${KALLSYMS_FINDER}" "${OUTDIR}"/boot/kernel >"${OUTDIR}"/bootRE/kernel_kallsyms.txt >/dev/null 2>&1
 		printf "kernel_kallsyms.txt generated\n"
 	fi
 	python3 "${VMLINUX2ELF}" "${OUTDIR}"/boot.img "${OUTDIR}"/bootRE/boot.elf >/dev/null 2>&1
@@ -814,11 +815,11 @@ neofetch || uname -r
 for p in $PARTITIONS; do
 	if ! echo "${p}" | grep -q "boot\|recovery\|dtbo\|vendor_boot\|tz"; then
 		if [[ -e "$p.img" ]]; then
-			mkdir "$p" 2> /dev/null || rm -rf "${p:?}"/*
+			mkdir "$p" 2>/dev/null || rm -rf "${p:?}"/*
 			echo "Extracting $p partition..."
-			7z x "$p".img -y -o"$p"/ > /dev/null 2>&1
+			7z x "$p".img -y -o"$p"/ >/dev/null 2>&1
 			if [ $? -eq 0 ]; then
-				rm "$p".img > /dev/null 2>&1
+				rm "$p".img >/dev/null 2>&1
 			else
 				# Handling EROFS Images, which can't be handled by 7z.
 				echo "Extraction Failed my 7z"
@@ -827,7 +828,7 @@ for p in $PARTITIONS; do
 					rm -rf "${p}"/*
 					"${FSCK_EROFS}" --extract="$p" "$p".img
 					if [ $? -eq 0 ]; then
-						rm -fv "$p".img > /dev/null 2>&1
+						rm -fv "$p".img >/dev/null 2>&1
 					else
 						echo "Couldn't extract $p partition by fsck.erofs. Using mount loop"
 						sudo mount -o loop -t auto "$p".img "$p"
@@ -839,7 +840,7 @@ for p in $PARTITIONS; do
 						sudo chown -R "$(whoami)" "${p}"/*
 						chmod -R u+rwX "${p}"/*
 						if [ $? -eq 0 ]; then
-							rm -fv "$p".img > /dev/null 2>&1
+							rm -fv "$p".img >/dev/null 2>&1
 						else
 							echo "Couldn't extract $p partition. It might use an unsupported filesystem."
 							echo "For EROFS: make sure you're using Linux 5.4+ kernel."
@@ -873,12 +874,12 @@ for dir in "vendor/euclid" "system/system/euclid"; do
 done
 
 # board-info.txt
-find "${OUTDIR}"/modem -type f -exec strings {} \; 2>/dev/null | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >> "${TMPDIR}"/board-info.txt
-find "${OUTDIR}"/tz* -type f -exec strings {} \; 2>/dev/null | grep "QC_IMAGE_VERSION_STRING" | sed "s|QC_IMAGE_VERSION_STRING|require version-trustzone|g" >> "${TMPDIR}"/board-info.txt
+find "${OUTDIR}"/modem -type f -exec strings {} \; 2>/dev/null | grep "QC_IMAGE_VERSION_STRING=MPSS." | sed "s|QC_IMAGE_VERSION_STRING=MPSS.||g" | cut -c 4- | sed -e 's/^/require version-baseband=/' >>"${TMPDIR}"/board-info.txt
+find "${OUTDIR}"/tz* -type f -exec strings {} \; 2>/dev/null | grep "QC_IMAGE_VERSION_STRING" | sed "s|QC_IMAGE_VERSION_STRING|require version-trustzone|g" >>"${TMPDIR}"/board-info.txt
 if [ -e "${OUTDIR}"/vendor/build.prop ]; then
-	strings "${OUTDIR}"/vendor/build.prop | grep "ro.vendor.build.date.utc" | sed "s|ro.vendor.build.date.utc|require version-vendor|g" >> "${TMPDIR}"/board-info.txt
+	strings "${OUTDIR}"/vendor/build.prop | grep "ro.vendor.build.date.utc" | sed "s|ro.vendor.build.date.utc|require version-vendor|g" >>"${TMPDIR}"/board-info.txt
 fi
-sort -u < "${TMPDIR}"/board-info.txt > "${OUTDIR}"/board-info.txt
+sort -u <"${TMPDIR}"/board-info.txt >"${OUTDIR}"/board-info.txt
 
 # set variables
 [[ $(find "$(pwd)"/system "$(pwd)"/system/system "$(pwd)"/vendor "$(pwd)"/*product -maxdepth 1 -type f -name "build*.prop" 2>/dev/null | sort -u | gawk '{print $NF}') ]] || { printf "No system/vendor/product build*.prop found, pushing cancelled.\n" && exit 1; }
@@ -990,7 +991,7 @@ top_codename=$(echo "${codename}" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print
 manufacturer=$(echo "${manufacturer}" | tr '[:upper:]' '[:lower:]' | tr -dc '[:print:]' | tr '_' '-' | cut -c 1-35)
 [ -f "bootRE/ikconfig" ] && kernel_version=$(cat bootRE/ikconfig | grep "Kernel Configuration" | head -1 | awk '{print $3}')
 # Repo README File
-printf "## %s\n- Manufacturer: %s\n- Platform: %s\n- Codename: %s\n- Brand: %s\n- Flavor: %s\n- Release Version: %s\n- Kernel Version: %s\n- Id: %s\n- Incremental: %s\n- Tags: %s\n- CPU Abilist: %s\n- A/B Device: %s\n- Treble Device: %s\n- Locale: %s\n- Screen Density: %s\n- Fingerprint: %s\n- OTA version: %s\n- Branch: %s\n- Repo: %s\n" "${description}" "${manufacturer}" "${platform}" "${codename}" "${brand}" "${flavor}" "${release}" "${kernel_version}" "${id}" "${incremental}" "${tags}" "${abilist}" "${is_ab}" "${treble_support}" "${locale}" "${density}" "${fingerprint}" "${otaver}" "${branch}" "${repo}" > "${OUTDIR}"/README.md
+printf "## %s\n- Manufacturer: %s\n- Platform: %s\n- Codename: %s\n- Brand: %s\n- Flavor: %s\n- Release Version: %s\n- Kernel Version: %s\n- Id: %s\n- Incremental: %s\n- Tags: %s\n- CPU Abilist: %s\n- A/B Device: %s\n- Treble Device: %s\n- Locale: %s\n- Screen Density: %s\n- Fingerprint: %s\n- OTA version: %s\n- Branch: %s\n- Repo: %s\n" "${description}" "${manufacturer}" "${platform}" "${codename}" "${brand}" "${flavor}" "${release}" "${kernel_version}" "${id}" "${incremental}" "${tags}" "${abilist}" "${is_ab}" "${treble_support}" "${locale}" "${density}" "${fingerprint}" "${otaver}" "${branch}" "${repo}" >"${OUTDIR}"/README.md
 cat "${OUTDIR}"/README.md
 
 # Generate TWRP Trees
@@ -1000,7 +1001,7 @@ if [[ "$is_ab" = true ]]; then
 		printf "Legacy A/B with recovery partition detected...\n"
 		twrpimg="recovery.img"
 	else
-	twrpimg="boot.img"
+		twrpimg="boot.img"
 	fi
 else
 	twrpimg="recovery.img"
@@ -1009,7 +1010,7 @@ if [[ -f ${twrpimg} ]]; then
 	mkdir -p $twrpdtout
 	python3 -m twrpdtgen $twrpimg -o $twrpdtout
 	if [[ "$?" = 0 ]]; then
-		[[ ! -e "${OUTDIR}"/twrp-device-tree/README.md ]] && curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md > ${twrpdtout}/README.md
+		[[ ! -e "${OUTDIR}"/twrp-device-tree/README.md ]] && curl https://raw.githubusercontent.com/wiki/SebaUbuntu/TWRP-device-tree-generator/4.-Build-TWRP-from-source.md >${twrpdtout}/README.md
 	fi
 fi
 
@@ -1018,24 +1019,24 @@ rm -rf $(find $twrpdtout -type d -name ".git")
 
 # copy file names
 chown "$(whoami)" ./* -R
-chmod -R u+rwX ./*		#ensure final permissions
-find "$OUTDIR" -type f -printf '%P\n' | sort | grep -v ".git/" > "$OUTDIR"/all_files.txt
+chmod -R u+rwX ./* #ensure final permissions
+find "$OUTDIR" -type f -printf '%P\n' | sort | grep -v ".git/" >"$OUTDIR"/all_files.txt
 
 # Generate LineageOS Trees
 if [[ "$treble_support" = true ]]; then
-        aospdtout="lineage-device-tree"
-        mkdir -p $aospdtout
-        python3 -m aospdtgen $OUTDIR -o $aospdtout
+	aospdtout="lineage-device-tree"
+	mkdir -p $aospdtout
+	python3 -m aospdtgen $OUTDIR -o $aospdtout
 
-        # Remove all .git directories from aospdtout
-        rm -rf $(find $aospdtout -type d -name ".git")
+	# Remove all .git directories from aospdtout
+	rm -rf $(find $aospdtout -type d -name ".git")
 
-        # Regenerate all_files.txt
-        find "$OUTDIR" -type f -printf '%P\n' | sort | grep -v ".git/" > "$OUTDIR"/all_files.txt
+	# Regenerate all_files.txt
+	find "$OUTDIR" -type f -printf '%P\n' | sort | grep -v ".git/" >"$OUTDIR"/all_files.txt
 fi
 
 # Generate Files having the sha1sum values of the Blobs
-function write_sha1sum(){
+function write_sha1sum() {
 	# Usage: write_sha1sum <file> <destination_file>
 
 	local SRC_FILE=$1
@@ -1043,9 +1044,9 @@ function write_sha1sum(){
 
 	# Temporary file
 	local TMP_FILE=${SRC_FILE}.sha1sum.tmp
-	
+
 	# Get rid of all the Blank lines and Comments
-	( cat ${SRC_FILE} | grep -v '^[[:space:]]*$' | grep -v "# " ) > ${TMP_FILE}
+	(cat ${SRC_FILE} | grep -v '^[[:space:]]*$' | grep -v "# ") >${TMP_FILE}
 
 	# Append the sha1sum of blobs in the Destination File
 	cp ${SRC_FILE} ${DST_FILE}
@@ -1083,14 +1084,14 @@ function write_sha1sum(){
 # Generate proprietary-files.txt
 printf "Generating proprietary-files.txt...\n"
 bash "${UTILSDIR}"/android_tools/tools/proprietary-files.sh "${OUTDIR}"/all_files.txt >/dev/null
-printf "# All blobs from %s, unless pinned\n" "${description}" > "${OUTDIR}"/proprietary-files.txt
-cat "${UTILSDIR}"/android_tools/working/proprietary-files.txt >> "${OUTDIR}"/proprietary-files.txt
+printf "# All blobs from %s, unless pinned\n" "${description}" >"${OUTDIR}"/proprietary-files.txt
+cat "${UTILSDIR}"/android_tools/working/proprietary-files.txt >>"${OUTDIR}"/proprietary-files.txt
 
 # Generate proprietary-files.sha1
 printf "Generating proprietary-files.sha1...\n"
-printf "# All blobs are from \"%s\" and are pinned with sha1sum values\n" "${description}" > "${OUTDIR}"/proprietary-files.sha1
+printf "# All blobs are from \"%s\" and are pinned with sha1sum values\n" "${description}" >"${OUTDIR}"/proprietary-files.sha1
 write_sha1sum ${UTILSDIR}/android_tools/working/proprietary-files.{txt,sha1}
-cat "${UTILSDIR}"/android_tools/working/proprietary-files.sha1 >> "${OUTDIR}"/proprietary-files.sha1
+cat "${UTILSDIR}"/android_tools/working/proprietary-files.sha1 >>"${OUTDIR}"/proprietary-files.sha1
 
 # Stash the changes done at ${UTILSDIR}/android_tools
 git -C "${UTILSDIR}"/android_tools/ add --all
@@ -1099,24 +1100,24 @@ git -C "${UTILSDIR}"/android_tools/ stash
 # Generate all_files.sha1
 printf "Generating all_files.sha1...\n"
 write_sha1sum "$OUTDIR"/all_files.{txt,sha1.tmp}
-( cat "$OUTDIR"/all_files.sha1.tmp | grep -v all_files.txt ) > "$OUTDIR"/all_files.sha1		# all_files.txt will be regenerated
+(cat "$OUTDIR"/all_files.sha1.tmp | grep -v all_files.txt) >"$OUTDIR"/all_files.sha1 # all_files.txt will be regenerated
 rm -rf "$OUTDIR"/all_files.sha1.tmp
 
 # Regenerate all_files.txt
 printf "Generating all_files.txt...\n"
-find "$OUTDIR" -type f -printf '%P\n' | sort | grep -v ".git/" > "$OUTDIR"/all_files.txt
+find "$OUTDIR" -type f -printf '%P\n' | sort | grep -v ".git/" >"$OUTDIR"/all_files.txt
 
 rm -rf "${TMPDIR}" 2>/dev/null
 
 if [[ -s "${PROJECT_DIR}"/.github_token ]]; then
-	GITHUB_TOKEN=$(< "${PROJECT_DIR}"/.github_token)	# Write Your Github Token In a Text File
+	GITHUB_TOKEN=$(<"${PROJECT_DIR}"/.github_token) # Write Your Github Token In a Text File
 	[[ -z "$(git config --get user.email)" ]] && git config user.email "guptasushrut@gmail.com"
 	[[ -z "$(git config --get user.name)" ]] && git config user.name "Sushrut1101"
 	if [[ -s "${PROJECT_DIR}"/.github_orgname ]]; then
-		GIT_ORG=$(< "${PROJECT_DIR}"/.github_orgname)	# Set Your Github Organization Name
+		GIT_ORG=$(<"${PROJECT_DIR}"/.github_orgname) # Set Your Github Organization Name
 	else
 		GIT_USER="$(git config --get user.name)"
-		GIT_ORG="${GIT_USER}"				# Otherwise, Your Username will be used
+		GIT_ORG="${GIT_USER}" # Otherwise, Your Username will be used
 	fi
 	# Check if already dumped or not
 	curl -sf "https://raw.githubusercontent.com/${GIT_ORG}/${repo}/${branch}/all_files.txt" 2>/dev/null && { printf "Firmware already dumped!\nGo to https://github.com/%s/%s/tree/%s\n" "${GIT_ORG}" "${repo}" "${branch}" && exit 1; }
@@ -1124,32 +1125,32 @@ if [[ -s "${PROJECT_DIR}"/.github_token ]]; then
 	find . -mindepth 2 -type d -name "\[SYS\]" -exec rm -rf {} \; 2>/dev/null
 	# Files larger than 62MB will be split into 47MB parts as *.aa, *.ab, etc.
 	mkdir -p "${TMPDIR}" 2>/dev/null
-	find . -size +62M | cut -d'/' -f'2-' >| "${TMPDIR}"/.largefiles
+	find . -size +62M | cut -d'/' -f'2-' >|"${TMPDIR}"/.largefiles
 	if [[ -s "${TMPDIR}"/.largefiles ]]; then
-		printf '#!/bin/bash\n\n' > join_split_files.sh
+		printf '#!/bin/bash\n\n' >join_split_files.sh
 		while read -r l; do
 			split -b 47M "${l}" "${l}".
 			rm -f "${l}" 2>/dev/null
-			printf "cat %s.* 2>/dev/null >> %s\n" "${l}" "${l}" >> join_split_files.sh
-			printf "rm -f %s.* 2>/dev/null\n" "${l}" >> join_split_files.sh
-		done < "${TMPDIR}"/.largefiles
+			printf "cat %s.* 2>/dev/null >> %s\n" "${l}" "${l}" >>join_split_files.sh
+			printf "rm -f %s.* 2>/dev/null\n" "${l}" >>join_split_files.sh
+		done <"${TMPDIR}"/.largefiles
 		chmod a+x join_split_files.sh 2>/dev/null
 	fi
 	rm -rf "${TMPDIR}" 2>/dev/null
 	printf "\nFinal Repository Should Look Like...\n" && ls -lAog
 	printf "\n\nStarting Git Init...\n"
-	git init		# Insure Your Github Authorization Before Running This Script
-	git config --global http.postBuffer 524288000		# A Simple Tuning to Get Rid of curl (18) error while `git push`
+	git init                                      # Insure Your Github Authorization Before Running This Script
+	git config --global http.postBuffer 524288000 # A Simple Tuning to Get Rid of curl (18) error while `git push`
 	git checkout -b "${branch}" || { git checkout -b "${incremental}" && export branch="${incremental}"; }
-	find . \( -name "*sensetime*" -o -name "*.lic" \) | cut -d'/' -f'2-' >| .gitignore
+	find . \( -name "*sensetime*" -o -name "*.lic" \) | cut -d'/' -f'2-' >|.gitignore
 	[[ ! -s .gitignore ]] && rm .gitignore
 	if [[ "${GIT_ORG}" == "${GIT_USER}" ]]; then
 		curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -d '{"name": "'"${repo}"'", "description": "'"${description}"'"}' "https://api.github.com/user/repos" >/dev/null 2>&1
 	else
 		curl -s -X POST -H "Authorization: token ${GITHUB_TOKEN}" -d '{ "name": "'"${repo}"'", "description": "'"${description}"'"}' "https://api.github.com/orgs/${GIT_ORG}/repos" >/dev/null 2>&1
 	fi
-	curl -s -X PUT -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"${platform}"'","'"${manufacturer}"'","'"${top_codename}"'","firmware","dump"]}' "https://api.github.com/repos/${GIT_ORG}/${repo}/topics" 	# Update Repository Topics
-	
+	curl -s -X PUT -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.mercy-preview+json" -d '{ "names": ["'"${platform}"'","'"${manufacturer}"'","'"${top_codename}"'","firmware","dump"]}' "https://api.github.com/repos/${GIT_ORG}/${repo}/topics" # Update Repository Topics
+
 	# Commit and Push
 	printf "\nPushing to %s via HTTPS...\nBranch:%s\n" "https://github.com/${GIT_ORG}/${repo}.git" "${branch}"
 	sleep 1
@@ -1174,17 +1175,17 @@ if [[ -s "${PROJECT_DIR}"/.github_token ]]; then
 	git commit -sm "Add system for ${description}"
 	git push -u origin "${branch}"
 	sleep 1
-	
+
 	# Telegram channel post
 	if [[ -s "${PROJECT_DIR}"/.tg_token ]]; then
-		TG_TOKEN=$(< "${PROJECT_DIR}"/.tg_token)
-		if [[ -s "${PROJECT_DIR}"/.tg_chat ]]; then		# TG Channel ID
-			CHAT_ID=$(< "${PROJECT_DIR}"/.tg_chat)
+		TG_TOKEN=$(<"${PROJECT_DIR}"/.tg_token)
+		if [[ -s "${PROJECT_DIR}"/.tg_chat ]]; then # TG Channel ID
+			CHAT_ID=$(<"${PROJECT_DIR}"/.tg_chat)
 		else
 			CHAT_ID="@DumprXDumps"
 		fi
 		printf "Sending telegram notification...\n"
-		printf "<b>Brand: %s</b>" "${brand}" >| "${OUTDIR}"/tg.html
+		printf "<b>Brand: %s</b>" "${brand}" >|"${OUTDIR}"/tg.html
 		{
 			printf "\n<b>Device: %s</b>" "${codename}"
 			printf "\n<b>Platform: %s</b>" "${platform}"
@@ -1192,24 +1193,24 @@ if [[ -s "${PROJECT_DIR}"/.github_token ]]; then
 			[ ! -z "${kernel_version}" ] && printf "\n<b>Kernel Version:</b> %s" "${kernel_version}"
 			printf "\n<b>Fingerprint:</b> %s" "${fingerprint}"
 			printf "\n<a href=\"https://github.com/%s/%s/tree/%s/\">Github Tree</a>" "${GIT_ORG}" "${repo}" "${branch}"
-		} >> "${OUTDIR}"/tg.html
-		TEXT=$(< "${OUTDIR}"/tg.html)
+		} >>"${OUTDIR}"/tg.html
+		TEXT=$(<"${OUTDIR}"/tg.html)
 		rm -rf "${OUTDIR}"/tg.html
 		curl -s "https://api.telegram.org/bot${TG_TOKEN}/sendmessage" --data "text=${TEXT}&chat_id=${CHAT_ID}&parse_mode=HTML&disable_web_page_preview=True" || printf "Telegram Notification Sending Error.\n"
 	fi
 
 elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	if [[ -s "${PROJECT_DIR}"/.gitlab_group ]]; then
-		GIT_ORG=$(< "${PROJECT_DIR}"/.gitlab_group)	# Set Your Gitlab Group Name
+		GIT_ORG=$(<"${PROJECT_DIR}"/.gitlab_group) # Set Your Gitlab Group Name
 	else
 		GIT_USER="$(git config --get user.name)"
-		GIT_ORG="${GIT_USER}"				# Otherwise, Your Username will be used
+		GIT_ORG="${GIT_USER}" # Otherwise, Your Username will be used
 	fi
 
 	# Gitlab Vars
-	GITLAB_TOKEN=$(< "${PROJECT_DIR}"/.gitlab_token)	# Write Your Gitlab Token In a Text File
+	GITLAB_TOKEN=$(<"${PROJECT_DIR}"/.gitlab_token) # Write Your Gitlab Token In a Text File
 	if [ -f "${PROJECT_DIR}"/.gitlab_instance ]; then
-		GITLAB_INSTANCE=$(< "${PROJECT_DIR}"/.gitlab_instance)
+		GITLAB_INSTANCE=$(<"${PROJECT_DIR}"/.gitlab_instance)
 	else
 		GITLAB_INSTANCE="gitlab.com"
 	fi
@@ -1223,10 +1224,10 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	printf "\nFinal Repository Should Look Like...\n" && ls -lAog
 	printf "\n\nStarting Git Init...\n"
 
-	git init		# Insure Your GitLab Authorization Before Running This Script
-	git config --global http.postBuffer 524288000		# A Simple Tuning to Get Rid of curl (18) error while `git push`
+	git init                                      # Insure Your GitLab Authorization Before Running This Script
+	git config --global http.postBuffer 524288000 # A Simple Tuning to Get Rid of curl (18) error while `git push`
 	git checkout -b "${branch}" || { git checkout -b "${incremental}" && export branch="${incremental}"; }
-	find . \( -name "*sensetime*" -o -name "*.lic" \) | cut -d'/' -f'2-' >| .gitignore
+	find . \( -name "*sensetime*" -o -name "*.lic" \) | cut -d'/' -f'2-' >|.gitignore
 	[[ ! -s .gitignore ]] && rm .gitignore
 	[[ -z "$(git config --get user.email)" ]] && git config user.email "guptasushrut@gmail.com"
 	[[ -z "$(git config --get user.name)" ]] && git config user.name "Sushrut1101"
@@ -1234,46 +1235,44 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	# Create Subgroup
 	GRP_ID=$(curl -s --request GET --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" "${GITLAB_HOST}/api/v4/groups/${GIT_ORG}" | jq -r '.id')
 	curl --request POST \
-	--header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-	--header "Content-Type: application/json" \
-	--data '{"name": "'"${brand}"'", "path": "'"$(echo ${brand} | tr [:upper:] [:lower:])"'", "visibility": "public", "parent_id": "'"${GRP_ID}"'"}' \
-	"${GITLAB_HOST}/api/v4/groups/"
+		--header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+		--header "Content-Type: application/json" \
+		--data '{"name": "'"${brand}"'", "path": "'"$(echo ${brand} | tr [:upper:] [:lower:])"'", "visibility": "public", "parent_id": "'"${GRP_ID}"'"}' \
+		"${GITLAB_HOST}/api/v4/groups/"
 	echo ""
 
 	# Subgroup ID
-	get_gitlab_subgrp_id(){
+	get_gitlab_subgrp_id() {
 		local SUBGRP=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-		curl -s --request GET --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "${GITLAB_HOST}/api/v4/groups/${GIT_ORG}/subgroups" | jq -r .[] | jq -r .path,.id > /tmp/subgrp.txt
+		curl -s --request GET --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "${GITLAB_HOST}/api/v4/groups/${GIT_ORG}/subgroups" | jq -r .[] | jq -r .path,.id >/tmp/subgrp.txt
 		local i
-		for i in $(seq "$(cat /tmp/subgrp.txt | wc -l)")
-		do
+		for i in $(seq "$(cat /tmp/subgrp.txt | wc -l)"); do
 			local TMP_I=$(cat /tmp/subgrp.txt | head -"$i" | tail -1)
-			[[ "$TMP_I" == "$SUBGRP" ]] && cat /tmp/subgrp.txt | head -$(("$i"+1)) | tail -1 > "$2"
+			[[ "$TMP_I" == "$SUBGRP" ]] && cat /tmp/subgrp.txt | head -$(("$i" + 1)) | tail -1 >"$2"
 		done
-		}
+	}
 
 	get_gitlab_subgrp_id ${brand} /tmp/subgrp_id.txt
-	SUBGRP_ID=$(< /tmp/subgrp_id.txt)
+	SUBGRP_ID=$(</tmp/subgrp_id.txt)
 
 	# Create Repository
 	curl -s \
-	--header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
-	-X POST \
-	"${GITLAB_HOST}/api/v4/projects?name=${codename}&namespace_id=${SUBGRP_ID}&visibility=public"
+		--header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+		-X POST \
+		"${GITLAB_HOST}/api/v4/projects?name=${codename}&namespace_id=${SUBGRP_ID}&visibility=public"
 
 	# Get Project/Repo ID
-	get_gitlab_project_id(){
+	get_gitlab_project_id() {
 		local PROJ="$1"
-		curl -s --request GET --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "${GITLAB_HOST}/api/v4/groups/$2/projects" | jq -r .[] | jq -r .path,.id > /tmp/proj.txt
+		curl -s --request GET --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "${GITLAB_HOST}/api/v4/groups/$2/projects" | jq -r .[] | jq -r .path,.id >/tmp/proj.txt
 		local i
-		for i in $(seq "$(cat /tmp/proj.txt | wc -l)")
-		do
+		for i in $(seq "$(cat /tmp/proj.txt | wc -l)"); do
 			local TMP_I=$(cat /tmp/proj.txt | head -"$i" | tail -1)
-			[[ "$TMP_I" == "$PROJ" ]] && cat /tmp/proj.txt | head -$(("$i"+1)) | tail -1 > "$3"
+			[[ "$TMP_I" == "$PROJ" ]] && cat /tmp/proj.txt | head -$(("$i" + 1)) | tail -1 >"$3"
 		done
-		}
+	}
 	get_gitlab_project_id ${codename} ${SUBGRP_ID} /tmp/proj_id.txt
-	PROJECT_ID=$(< /tmp/proj_id.txt)
+	PROJECT_ID=$(</tmp/proj_id.txt)
 
 	# Delete the Temporary Files
 	rm -rf /tmp/{subgrp,subgrp_id,proj,proj_id}.txt
@@ -1288,8 +1287,7 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	printf "\n"
 
 	# Push to GitLab
-	while [[ ! $(curl -sL "${GITLAB_HOST}/${GIT_ORG}/${repo}/-/raw/${branch}/all_files.txt" | grep "all_files.txt") ]]
-	do
+	while [[ ! $(curl -sL "${GITLAB_HOST}/${GIT_ORG}/${repo}/-/raw/${branch}/all_files.txt" | grep "all_files.txt") ]]; do
 		printf "\nPushing to %s via SSH...\nBranch:%s\n" "${GITLAB_HOST}/${GIT_ORG}/${repo}.git" "${branch}"
 		sleep 1
 		git lfs install
@@ -1315,7 +1313,7 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	done
 
 	# Update the Default Branch
-	curl	--request PUT \
+	curl --request PUT \
 		--header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
 		--url ''"${GITLAB_HOST}"'/api/v4/projects/'"${PROJECT_ID}"'' \
 		--data "default_branch=${branch}"
@@ -1323,14 +1321,14 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 
 	# Telegram channel post
 	if [[ -s "${PROJECT_DIR}"/.tg_token ]]; then
-		TG_TOKEN=$(< "${PROJECT_DIR}"/.tg_token)
-		if [[ -s "${PROJECT_DIR}"/.tg_chat ]]; then		# TG Channel ID
-			CHAT_ID=$(< "${PROJECT_DIR}"/.tg_chat)
+		TG_TOKEN=$(<"${PROJECT_DIR}"/.tg_token)
+		if [[ -s "${PROJECT_DIR}"/.tg_chat ]]; then # TG Channel ID
+			CHAT_ID=$(<"${PROJECT_DIR}"/.tg_chat)
 		else
 			CHAT_ID="@DumprXDumps"
 		fi
 		printf "Sending telegram notification...\n"
-		printf "<b>Brand: %s</b>" "${brand}" >| "${OUTDIR}"/tg.html
+		printf "<b>Brand: %s</b>" "${brand}" >|"${OUTDIR}"/tg.html
 		{
 			printf "\n<b>Device: %s</b>" "${codename}"
 			printf "\n<b>Platform: %s</b>" "${platform}"
@@ -1338,8 +1336,8 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 			[ ! -z "${kernel_version}" ] && printf "\n<b>Kernel Version:</b> %s" "${kernel_version}"
 			printf "\n<b>Fingerprint:</b> %s" "${fingerprint}"
 			printf "\n<a href=\"${GITLAB_HOST}/%s/%s/-/tree/%s/\">Gitlab Tree</a>" "${GIT_ORG}" "${repo}" "${branch}"
-		} >> "${OUTDIR}"/tg.html
-		TEXT=$(< "${OUTDIR}"/tg.html)
+		} >>"${OUTDIR}"/tg.html
+		TEXT=$(<"${OUTDIR}"/tg.html)
 		rm -rf "${OUTDIR}"/tg.html
 		curl -s "https://api.telegram.org/bot${TG_TOKEN}/sendmessage" --data "text=${TEXT}&chat_id=${CHAT_ID}&parse_mode=HTML&disable_web_page_preview=True" || printf "Telegram Notification Sending Error.\n"
 	fi
