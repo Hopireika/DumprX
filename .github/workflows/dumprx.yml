@@ -1,0 +1,40 @@
+name: Dumpyara
+
+on:
+  workflow_dispatch:
+    inputs:
+      link:
+        description: 'Direct Firmare Link'
+        required: true
+
+env:
+  DUMP_URL: ${{ github.event.inputs.link }}
+  TZ: Asia/Jakarta
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          overprovision-lvm: true
+          remove-dotnet: true
+          remove-android: true
+          remove-codeql: true
+          remove-haskell: true
+          remove-docker-images: true
+
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run DumprX
+        run: |
+          echo "${{ secrets.GH_TOKEN }}" > .github_token
+          echo "${{ secrets.GH_ORG }}" > .github_orgname
+          echo "${{ secrets.TG_TOKEN }}" > .tg_token
+          echo "${{ secrets.TG_CHAT }}" > .tg_chat
+          bash setup.sh
+          bash dumper.sh "$DUMP_URL"
