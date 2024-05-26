@@ -32,6 +32,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Run DumprX
         run: |
+          git config --global user.name "Kizziama"
+          git config --global user.email "kizziama@proton.me"
           echo "${{ secrets.GH_TOKEN }}" > .github_token
           echo "${{ secrets.GH_ORG }}" > .github_orgname
           echo "${{ secrets.TG_TOKEN }}" > .tg_token
